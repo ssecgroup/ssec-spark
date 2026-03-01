@@ -282,7 +282,7 @@ if __name__ == '__main__':
     print("=" * 60)
     print("🔥 SSEC-SPARK - COMPLETE EDITION")
     print("=" * 60)
-    print("\n✅ ALL FEATURES ENABLED:")
+    print("\n ALL FEATURES ENABLED:")
     print("   • Hashtags (Reddit + Google + News)")
     print("   • News (BBC, Reuters, Guardian, CNN)")
     print("   • Market (S&P 500, Bitcoin)")
@@ -290,8 +290,21 @@ if __name__ == '__main__':
     print("   • Map + Location")
     print("   • Reddit Trending")
     print("   • Trend Velocity")
-    print(f"\n💰 Donation: {DONATION_ADDRESS}")
-    print("\n🚀 Server starting on http://localhost:5000")
+    print(f"\n Donation: {DONATION_ADDRESS}")
+    print("\n Server starting on http://localhost:5000")
     print("=" * 60)
     
     app.run(port=5000, debug=True)
+
+    # Add this at the end of backend/app.py
+    # For local development
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+
+    # For Vercel serverless
+    app = app
+# For local development
+if __name__ == '__main__':
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)

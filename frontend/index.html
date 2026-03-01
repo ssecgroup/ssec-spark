@@ -366,7 +366,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ==================== CONFIG ====================
-        const API_URL = 'http://localhost:5000/api/trends';
+        // Auto-detect API URL (works locally and on Vercel)
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api/trends'
+    : '/api/trends';
         const DONATION = '0x8242f0f25c5445F7822e80d3C9615e57586c6639';
         let map, marker;
         let currentData = {};
