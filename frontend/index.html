@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SSEC-SPARK - Complete Trend Engine</title>
+    <title>SSEC-SPARK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -12,13 +12,8 @@
             color: #e2e8f0;
             line-height: 1.5;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         
-        /* Header */
         .header {
             background: #1e293b;
             padding: 16px 20px;
@@ -31,251 +26,115 @@
             gap: 15px;
             border: 1px solid #334155;
         }
-        .logo {
-            font-size: 24px;
-            font-weight: 600;
-            color: #f97316;
-        }
-        .location-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+        .logo { font-size: 24px; font-weight: 600; color: #f97316; }
+        .location-controls { display: flex; gap: 12px; align-items: center; }
         .location-btn {
-            background: #334155;
-            color: white;
-            border: 1px solid #f97316;
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
+            background: #334155; color: white; border: 1px solid #f97316;
+            padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 14px;
         }
-        .location-btn:hover {
-            background: #f97316;
-            color: #0f172a;
-        }
-        .location-text {
-            color: #94a3b8;
-            font-size: 14px;
-        }
+        .location-btn:hover { background: #f97316; color: #0f172a; }
+        .location-text { color: #94a3b8; font-size: 14px; }
         
-        /* Map */
         #map {
-            height: 280px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #334155;
-            z-index: 1;
+            height: 280px; border-radius: 12px; margin-bottom: 20px;
+            border: 1px solid #334155; z-index: 1;
         }
         
-        /* Stats Bar */
         .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
             margin-bottom: 20px;
         }
         .stat-card {
-            background: #1e293b;
-            padding: 16px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid #334155;
+            background: #1e293b; padding: 16px; border-radius: 10px;
+            text-align: center; border: 1px solid #334155;
         }
-        .stat-value {
-            font-size: 28px;
-            font-weight: 600;
-            color: #f97316;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
+        .stat-value { font-size: 28px; font-weight: 600; color: #f97316; }
+        .stat-label { font-size: 12px; color: #94a3b8; margin-top: 5px; }
         
-        /* Two Column Layout */
         .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
             margin-bottom: 20px;
         }
-        @media (max-width: 700px) {
-            .row {
-                grid-template-columns: 1fr;
-            }
-        }
+        @media (max-width: 700px) { .row { grid-template-columns: 1fr; } }
         
-        /* Cards */
         .card {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
+            background: #1e293b; border-radius: 12px; padding: 20px;
             border: 1px solid #334155;
         }
         .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #f97316;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #334155;
+            font-size: 18px; font-weight: 600; margin-bottom: 16px;
+            color: #f97316; padding-bottom: 10px; border-bottom: 1px solid #334155;
         }
         
-        /* Tags */
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .tags { display: flex; flex-wrap: wrap; gap: 10px; }
         .tag {
-            background: #334155;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: #334155; padding: 8px 16px; border-radius: 30px;
+            font-size: 14px; cursor: pointer;
         }
-        .tag:hover {
-            background: #f97316;
-            color: #0f172a;
-        }
-        .tag.top1 { background: #f97316; color: #0f172a; font-weight: 500; }
+        .tag:hover { background: #f97316; color: #0f172a; }
+        .tag.top1 { background: #f97316; color: #0f172a; }
         .tag.top2 { background: #f97316; opacity: 0.9; color: #0f172a; }
         .tag.top3 { background: #f97316; opacity: 0.8; color: #0f172a; }
         
-        /* News List */
         .news-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #334155;
-            cursor: pointer;
+            padding: 12px 0; border-bottom: 1px solid #334155; cursor: pointer;
         }
-        .news-item:last-child { border-bottom: none; }
         .news-item:hover .news-title { color: #f97316; }
         .news-title { font-weight: 500; margin-bottom: 4px; }
         .news-source { font-size: 12px; color: #94a3b8; }
         
-        /* Market Grid */
         .market-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
             margin-bottom: 15px;
         }
         .market-item {
-            background: #334155;
-            padding: 15px;
-            border-radius: 8px;
+            background: #334155; padding: 15px; border-radius: 8px;
         }
-        .market-symbol {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 5px;
-        }
-        .market-price {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .market-change {
-            font-size: 14px;
-        }
+        .market-symbol { font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
+        .market-price { font-size: 20px; font-weight: 600; margin-bottom: 5px; }
         .positive { color: #10b981; }
         .negative { color: #ef4444; }
         .market-sentiment {
-            background: #334155;
-            padding: 12px;
-            border-radius: 8px;
+            background: #334155; padding: 12px; border-radius: 8px;
             text-align: center;
         }
-        .sentiment-value {
-            font-size: 18px;
-            font-weight: 600;
-            color: #f97316;
-        }
-        .prediction {
-            font-size: 14px;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
+        .sentiment-value { font-size: 18px; font-weight: 600; color: #f97316; }
         
-        /* Reddit List */
         .reddit-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #334155;
-            cursor: pointer;
+            padding: 12px 0; border-bottom: 1px solid #334155; cursor: pointer;
         }
-        .reddit-item:last-child { border-bottom: none; }
         .reddit-item:hover .reddit-title { color: #f97316; }
         .reddit-title { font-weight: 500; margin-bottom: 4px; }
         .reddit-meta { font-size: 12px; color: #94a3b8; }
         
-        /* Velocity Meter */
         .velocity-container {
-            background: #334155;
-            height: 20px;
-            border-radius: 10px;
-            margin: 10px 0;
-            overflow: hidden;
+            background: #334155; height: 20px; border-radius: 10px;
+            margin: 10px 0; overflow: hidden;
         }
         .velocity-bar {
-            height: 100%;
-            background: #f97316;
-            border-radius: 10px;
+            height: 100%; background: #f97316; border-radius: 10px;
             transition: width 0.3s;
         }
         
-        /* Donation */
         .donation {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 20px;
-            border: 1px solid #f97316;
+            background: #1e293b; padding: 20px; border-radius: 12px;
+            text-align: center; margin-top: 20px; border: 1px solid #f97316;
         }
         .donation-address {
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 15px;
-            color: #f97316;
-            margin: 10px 0;
-            word-break: break-all;
-            cursor: pointer;
+            background: #0f172a; padding: 12px; border-radius: 8px;
+            font-family: monospace; font-size: 15px; color: #f97316;
+            margin: 10px 0; word-break: break-all; cursor: pointer;
             border: 1px solid #334155;
         }
-        .donation-address:hover {
-            background: #f97316;
-            color: #0f172a;
-        }
+        .donation-address:hover { background: #f97316; color: #0f172a; }
         
-        /* Loading/Error */
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: #94a3b8;
-        }
-        .error {
-            text-align: center;
-            padding: 30px;
-            color: #ef4444;
-        }
-        
-        /* Footer */
-        .footer-note {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 12px;
-            margin-top: 15px;
-        }
+        .loading { text-align: center; padding: 30px; color: #94a3b8; }
+        .error { text-align: center; padding: 30px; color: #ef4444; }
+        .footer-note { text-align: center; color: #94a3b8; font-size: 12px; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div class="logo">SSEC-SPARK</div>
             <div class="location-controls">
@@ -284,10 +143,8 @@
             </div>
         </div>
 
-        <!-- Map -->
         <div id="map"></div>
 
-        <!-- Stats -->
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-value" id="trendCount">0</div>
@@ -303,9 +160,7 @@
             </div>
         </div>
 
-        <!-- First Row: Trending + Market -->
         <div class="row">
-            <!-- Trending Hashtags -->
             <div class="card">
                 <div class="card-title">Trending Hashtags</div>
                 <div class="tags" id="trendsContainer">
@@ -316,7 +171,6 @@
                 </div>
             </div>
 
-            <!-- Market + Prediction -->
             <div class="card">
                 <div class="card-title">Market + Prediction</div>
                 <div class="market-grid" id="marketContainer">
@@ -325,17 +179,14 @@
             </div>
         </div>
 
-        <!-- Second Row: News + Reddit -->
         <div class="row">
-            <!-- News -->
             <div class="card">
-                <div class="card-title">Top News (BBC, Reuters, Guardian, CNN)</div>
+                <div class="card-title">Top News</div>
                 <div id="newsContainer">
                     <div class="loading">Loading news...</div>
                 </div>
             </div>
 
-            <!-- Reddit -->
             <div class="card">
                 <div class="card-title">Trending on Reddit</div>
                 <div id="redditContainer">
@@ -344,38 +195,31 @@
             </div>
         </div>
 
-        <!-- Donation -->
         <div class="donation">
             <div>Support Development</div>
             <div class="donation-address" id="donation" onclick="copyDonation()">
                 0x8242f0f25c5445F7822e80d3C9615e57586c6639
             </div>
-            <div class="footer-note">Click address to copy • Ethereum</div>
+            <div class="footer-note">Click to copy • Ethereum</div>
         </div>
         
         <div class="footer-note">
-            Data updates every 5 minutes • Sources: Reddit, Google Trends, BBC, Reuters, Guardian, CNN, Yahoo Finance
+            Sources: Reddit, Google, BBC, Reuters, Guardian, CNN, Yahoo Finance
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // ==================== CONFIG ====================
-        const API_URL = window.location.hostname === 'localhost' 
-            ? 'http://localhost:5000/api/trends'
-            : '/api/trends';
+        const API_URL = 'http://localhost:5000/api/trends';
         const DONATION = '0x8242f0f25c5445F7822e80d3C9615e57586c6639';
         let map, marker;
-        let currentData = {};
 
-        // ==================== INIT ====================
         function init() {
             initMap();
             loadTrends();
             setupLocation();
         }
 
-        // ==================== MAP ====================
         function initMap() {
             map = L.map('map').setView([20, 0], 2);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -394,137 +238,91 @@
             marker = L.marker([lat, lng]).addTo(map);
         }
 
-        // ==================== API ====================
         async function loadTrends(lat, lon) {
             try {
                 let url = API_URL;
-                if (lat && lon) {
-                    url += `?lat=${lat}&lon=${lon}`;
-                }
+                if (lat && lon) url += `?lat=${lat}&lon=${lon}`;
                 
-                const response = await fetch(url);
-                const data = await response.json();
+                const res = await fetch(url);
+                const data = await res.json();
                 
                 if (data.success) {
-                    currentData = data;
-                    updateUI(data);
+                    document.getElementById('trendCount').textContent = data.trending?.length || 0;
+                    document.getElementById('newsCount').textContent = data.news?.length || 0;
+                    document.getElementById('velocityDisplay').textContent = data.velocity || 0;
+                    document.getElementById('velocityBar').style.width = `${data.velocity || 0}%`;
                     
-                    if (lat && lon) {
-                        document.getElementById('locationDisplay').textContent = 
-                            data.location || 'Selected';
+                    document.getElementById('locationDisplay').textContent = data.location || 'Global';
+                    
+                    // Trends
+                    const trendsEl = document.getElementById('trendsContainer');
+                    if (data.trending?.length) {
+                        trendsEl.innerHTML = data.trending.map((tag, i) => 
+                            `<span class="tag ${i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : ''}" 
+                                   onclick="window.open('https://twitter.com/search?q=${encodeURIComponent(tag)}')">${tag}</span>`
+                        ).join('');
                     } else {
-                        document.getElementById('locationDisplay').textContent = 'Global';
+                        trendsEl.innerHTML = '<div class="loading">No trends</div>';
+                    }
+                    
+                    // News
+                    const newsEl = document.getElementById('newsContainer');
+                    if (data.news?.length) {
+                        newsEl.innerHTML = data.news.map(item => 
+                            `<div class="news-item" onclick="window.open('${item.url}')">
+                                <div class="news-title">${item.title}</div>
+                                <div class="news-source">${item.source}</div>
+                            </div>`
+                        ).join('');
+                    } else {
+                        newsEl.innerHTML = '<div class="loading">No news</div>';
+                    }
+                    
+                    // Market
+                    const marketEl = document.getElementById('marketContainer');
+                    if (data.market) {
+                        marketEl.innerHTML = `
+                            <div class="market-item">
+                                <div class="market-symbol">S&P 500</div>
+                                <div class="market-price">${data.market.sp500?.price}</div>
+                                <div class="${data.market.sp500?.trend === 'up' ? 'positive' : 'negative'}">
+                                    ${data.market.sp500?.change} (${data.market.sp500?.change_pct})
+                                </div>
+                            </div>
+                            <div class="market-item">
+                                <div class="market-symbol">Bitcoin</div>
+                                <div class="market-price">${data.market.bitcoin?.price}</div>
+                                <div class="${data.market.bitcoin?.trend === 'up' ? 'positive' : 'negative'}">
+                                    ${data.market.bitcoin?.change} (${data.market.bitcoin?.change_pct})
+                                </div>
+                            </div>
+                            <div class="market-sentiment">
+                                <div class="sentiment-value">${data.market.sentiment}</div>
+                                <div>${data.market.prediction}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Reddit
+                    const redditEl = document.getElementById('redditContainer');
+                    if (data.reddit?.length) {
+                        redditEl.innerHTML = data.reddit.map(post => 
+                            `<div class="reddit-item" onclick="window.open('${post.url}')">
+                                <div class="reddit-title">${post.title}</div>
+                                <div class="reddit-meta">r/${post.subreddit} • ${post.score} points</div>
+                            </div>`
+                        ).join('');
+                    } else {
+                        redditEl.innerHTML = '<div class="loading">No reddit data</div>';
                     }
                 }
             } catch (error) {
-                console.error('Error:', error);
-                showError();
+                console.error(error);
+                document.getElementById('trendsContainer').innerHTML = 
+                    '<div class="error">Connection error. Make sure backend is running on port 5000.</div>';
             }
         }
 
-        // ==================== UI UPDATE ====================
-        function updateUI(data) {
-            // Stats
-            document.getElementById('trendCount').textContent = data.trending?.length || 0;
-            document.getElementById('newsCount').textContent = data.news?.length || 0;
-            document.getElementById('velocityDisplay').textContent = data.velocity || 0;
-            
-            // Velocity bar
-            const velocityBar = document.getElementById('velocityBar');
-            if (velocityBar) {
-                velocityBar.style.width = `${data.velocity || 0}%`;
-            }
-            
-            // Trending hashtags
-            updateTrends(data.trending);
-            
-            // News
-            updateNews(data.news);
-            
-            // Market
-            updateMarket(data.market);
-            
-            // Reddit
-            updateReddit(data.reddit);
-        }
-
-        function updateTrends(trends) {
-            const container = document.getElementById('trendsContainer');
-            if (!trends || trends.length === 0) {
-                container.innerHTML = '<div class="loading">No trends</div>';
-                return;
-            }
-            
-            container.innerHTML = trends.map((tag, i) => {
-                let rankClass = '';
-                if (i === 0) rankClass = 'top1';
-                else if (i === 1) rankClass = 'top2';
-                else if (i === 2) rankClass = 'top3';
-                
-                return `<span class="tag ${rankClass}" onclick="searchTwitter('${tag}')">${tag}</span>`;
-            }).join('');
-        }
-
-        function updateNews(news) {
-            const container = document.getElementById('newsContainer');
-            if (!news || news.length === 0) {
-                container.innerHTML = '<div class="loading">No news</div>';
-                return;
-            }
-            
-            container.innerHTML = news.map(item => `
-                <div class="news-item" onclick="window.open('${item.url}', '_blank')">
-                    <div class="news-title">${item.title}</div>
-                    <div class="news-source">${item.source}</div>
-                </div>
-            `).join('');
-        }
-
-        function updateMarket(market) {
-            const container = document.getElementById('marketContainer');
-            if (!market) {
-                container.innerHTML = '<div class="loading">Market unavailable</div>';
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="market-item">
-                    <div class="market-symbol">S&P 500</div>
-                    <div class="market-price">${market.sp500?.price || '$4,521'}</div>
-                    <div class="market-change ${market.sp500?.trend === 'up' ? 'positive' : 'negative'}">
-                        ${market.sp500?.change || '+25'} (${market.sp500?.change_pct || '+0.56%'})
-                    </div>
-                </div>
-                <div class="market-item">
-                    <div class="market-symbol">Bitcoin</div>
-                    <div class="market-price">${market.bitcoin?.price || '$65,432'}</div>
-                    <div class="market-change ${market.bitcoin?.trend === 'up' ? 'positive' : 'negative'}">
-                        ${market.bitcoin?.change || '+1,200'} (${market.bitcoin?.change_pct || '+1.88%'})
-                    </div>
-                </div>
-                <div class="market-sentiment">
-                    <div class="sentiment-value">${market.sentiment || 'Bullish'}</div>
-                    <div class="prediction">${market.prediction || 'Markets trending up'}</div>
-                </div>
-            `;
-        }
-
-        function updateReddit(posts) {
-            const container = document.getElementById('redditContainer');
-            if (!posts || posts.length === 0) {
-                container.innerHTML = '<div class="loading">No reddit data</div>';
-                return;
-            }
-            
-            container.innerHTML = posts.map(post => `
-                <div class="reddit-item" onclick="window.open('${post.url}', '_blank')">
-                    <div class="reddit-title">${post.title}</div>
-                    <div class="reddit-meta">r/${post.subreddit} • ${post.score} points</div>
-                </div>
-            `).join('');
-        }
-
-        // ==================== LOCATION ====================
         function setupLocation() {
             document.getElementById('locateBtn').addEventListener('click', () => {
                 if (!navigator.geolocation) {
@@ -532,28 +330,16 @@
                     return;
                 }
                 
-                const btn = document.getElementById('locateBtn');
-                btn.textContent = 'Getting...';
-                
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
                         const { latitude, longitude } = pos.coords;
                         map.setView([latitude, longitude], 12);
                         updateMarker(latitude, longitude);
                         loadTrends(latitude, longitude);
-                        btn.textContent = 'My Location';
                     },
-                    () => {
-                        alert('Location access denied');
-                        btn.textContent = 'My Location';
-                    }
+                    () => alert('Location access denied')
                 );
             });
-        }
-
-        // ==================== UTILITIES ====================
-        function searchTwitter(tag) {
-            window.open(`https://twitter.com/search?q=${encodeURIComponent(tag)}`, '_blank');
         }
 
         function copyDonation() {
@@ -561,25 +347,16 @@
                 const el = document.getElementById('donation');
                 const original = el.textContent;
                 el.textContent = 'Copied!';
-                setTimeout(() => {
-                    el.textContent = original;
-                }, 2000);
+                setTimeout(() => el.textContent = original, 2000);
             });
         }
 
-        function showError() {
-            document.getElementById('trendsContainer').innerHTML = 
-                '<div class="error">Connection error</div>';
-        }
-
-        // Auto refresh every 5 minutes
         setInterval(() => {
             if (!document.getElementById('locationDisplay').textContent.includes('Selected')) {
                 loadTrends();
             }
         }, 300000);
 
-        // Start
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
