@@ -4,8 +4,6 @@ import feedparser
 import requests
 import yfinance as yf
 from datetime import datetime
-import random
-from collections import Counter
 import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
@@ -13,7 +11,6 @@ CORS(app)
 
 DONATION = "0x8242f0f25c5445F7822e80d3C9615e57586c6639"
 
-# News sources
 NEWS_SOURCES = [
     {'name': 'BBC', 'url': 'http://feeds.bbci.co.uk/news/rss.xml'},
     {'name': 'Reuters', 'url': 'https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best'},
@@ -52,10 +49,10 @@ class RedditCollector:
                     'posts': trends[:5],
                     'hashtags': list(dict.fromkeys(hashtags))[:8]
                 }
-        except:
-            pass
+        except Exception as e:
+            print(f"Reddit error: {e}")
         
-        # Fallback data
+        # FALLBACK DATA
         return {
             'posts': [
                 {'title': 'AI Breakthrough: New Model Released', 'subreddit': 'technology', 'score': 15234, 'url': 'https://reddit.com'},
@@ -80,8 +77,8 @@ class GoogleTrendsCollector:
                     if title is not None:
                         trends.append(f"#{title.text.replace(' ', '')}")
                 return trends
-        except:
-            pass
+        except Exception as e:
+            print(f"Google error: {e}")
         return ['#AI', '#Tech', '#Python', '#Coding', '#WebDev']
 
 class NewsCollector:
@@ -144,7 +141,8 @@ class MarketCollector:
                 'sentiment': sentiment,
                 'prediction': prediction
             }
-        except:
+        except Exception as e:
+            print(f"Market error: {e}")
             return {
                 'sp500': {'price': '$4,521', 'change': '+25', 'change_pct': '+0.56%', 'trend': 'up'},
                 'bitcoin': {'price': '$65,432', 'change': '+1,200', 'change_pct': '+1.88%', 'trend': 'up'},
@@ -217,9 +215,8 @@ def health():
 
 if __name__ == '__main__':
     print("=" * 50)
-    print("🔥 SSEC-SPARK STARTING")
+    print("🔥 SSEC-SPARK RUNNING")
     print("=" * 50)
     print(f"📍 Donation: {DONATION}")
-    print("📍 Features: Hashtags, News, Market, Map, Reddit")
     print("=" * 50)
     app.run(port=5000, debug=True)
