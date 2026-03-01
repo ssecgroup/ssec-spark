@@ -204,8 +204,10 @@
         .reddit-item {
             padding: 12px 0;
             border-bottom: 1px solid #334155;
+            cursor: pointer;
         }
         .reddit-item:last-child { border-bottom: none; }
+        .reddit-item:hover .reddit-title { color: #f97316; }
         .reddit-title { font-weight: 500; margin-bottom: 4px; }
         .reddit-meta { font-size: 12px; color: #94a3b8; }
         
@@ -222,13 +224,6 @@
             background: #f97316;
             border-radius: 10px;
             transition: width 0.3s;
-        }
-        .velocity-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 5px;
         }
         
         /* Donation */
@@ -316,8 +311,8 @@
                 <div class="tags" id="trendsContainer">
                     <div class="loading">Loading trends...</div>
                 </div>
-                <div class="velocity-container" id="velocityBar">
-                    <div class="velocity-bar" style="width: 0%"></div>
+                <div class="velocity-container">
+                    <div class="velocity-bar" id="velocityBar" style="width: 0%"></div>
                 </div>
             </div>
 
@@ -366,10 +361,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ==================== CONFIG ====================
-        // Auto-detect API URL (works locally and on Vercel)
-const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api/trends'
-    : '/api/trends';
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000/api/trends'
+            : '/api/trends';
         const DONATION = '0x8242f0f25c5445F7822e80d3C9615e57586c6639';
         let map, marker;
         let currentData = {};
@@ -418,6 +412,8 @@ const API_URL = window.location.hostname === 'localhost'
                     if (lat && lon) {
                         document.getElementById('locationDisplay').textContent = 
                             data.location || 'Selected';
+                    } else {
+                        document.getElementById('locationDisplay').textContent = 'Global';
                     }
                 }
             } catch (error) {
@@ -434,7 +430,7 @@ const API_URL = window.location.hostname === 'localhost'
             document.getElementById('velocityDisplay').textContent = data.velocity || 0;
             
             // Velocity bar
-            const velocityBar = document.querySelector('.velocity-bar');
+            const velocityBar = document.getElementById('velocityBar');
             if (velocityBar) {
                 velocityBar.style.width = `${data.velocity || 0}%`;
             }
