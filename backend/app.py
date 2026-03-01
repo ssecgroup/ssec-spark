@@ -1,16 +1,16 @@
 """
-SSEC-SPARK - Complete Trend Engine
+SSEC-SPARK - Complete Trend Engine (Optimized for Vercel)
 All features: Hashtags, News, Market, Map, Location, Reddit, Prediction, Donation
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import feedparser
 import requests
-from pytrends.request import TrendReq
 import yfinance as yf
 from datetime import datetime
 import random
 from collections import Counter
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -69,27 +69,28 @@ class RedditCollector:
 
 
 class GoogleTrendsCollector:
-    """Get Google Trends data (completely free)"""
-    
-    def __init__(self):
-        try:
-            self.pytrends = TrendReq(hl='en-US', tz=360)
-        except:
-            self.pytrends = None
+    """Get Google Trends data using requests (no pandas)"""
     
     def get_trends(self):
         try:
-            if not self.pytrends:
-                return []
+            # Using a free Google Trends API alternative
+            url = "https://trends.google.com/trends/trendingsearches/daily/rss"
+            response = requests.get(url, timeout=5)
             
-            # Get trending searches
-            trending = self.pytrends.trending_searches(pn='united_states')
-            if not trending.empty:
-                trends = trending[0].tolist()[:5]
-                return [f"#{t.replace(' ', '')}" for t in trends]
+            if response.status_code == 200:
+                import xml.etree.ElementTree as ET
+                root = ET.fromstring(response.content)
+                trends = []
+                for item in root.findall('.//item')[:5]:
+                    title = item.find('title')
+                    if title is not None:
+                        trends.append(f"#{title.text.replace(' ', '')}")
+                return trends
         except:
             pass
-        return []
+        
+        # Fallback trends
+        return ['#AI', '#Tech', '#Python', '#Coding', '#WebDev']
 
 
 class NewsCollector:
@@ -127,7 +128,7 @@ class MarketCollector:
                 sp_price = round(sp_hist['Close'].iloc[-1], 2)
                 sp_open = round(sp_hist['Open'].iloc[-1], 2)
                 sp_change = round(sp_price - sp_open, 2)
-                sp_change_pct = round((sp_change / sp_open) * 100, 2)
+                sp_change_pct = round((sp_change / sp_open) * 100, 2) if sp_open != 0 else 0
             else:
                 sp_price = 4500
                 sp_change = 25
@@ -141,7 +142,7 @@ class MarketCollector:
                 btc_price = round(btc_hist['Close'].iloc[-1], 2)
                 btc_open = round(btc_hist['Open'].iloc[-1], 2)
                 btc_change = round(btc_price - btc_open, 2)
-                btc_change_pct = round((btc_change / btc_open) * 100, 2)
+                btc_change_pct = round((btc_change / btc_open) * 100, 2) if btc_open != 0 else 0
             else:
                 btc_price = 65000
                 btc_change = 1200
@@ -162,13 +163,13 @@ class MarketCollector:
                 'sp500': {
                     'price': f"${sp_price:,.0f}",
                     'change': f"{'+' if sp_change > 0 else ''}{sp_change:.0f}",
-                    'change_pct': f"{'+' if sp_change_pct > 0 else ''}{sp_change_pct}%",
+                    'change_pct': f"{'+' if sp_change_pct > 0 else ''}{sp_change_pct:.2f}%",
                     'trend': 'up' if sp_change > 0 else 'down'
                 },
                 'bitcoin': {
                     'price': f"${btc_price:,.0f}",
                     'change': f"{'+' if btc_change > 0 else ''}{btc_change:.0f}",
-                    'change_pct': f"{'+' if btc_change_pct > 0 else ''}{btc_change_pct}%",
+                    'change_pct': f"{'+' if btc_change_pct > 0 else ''}{btc_change_pct:.2f}%",
                     'trend': 'up' if btc_change > 0 else 'down'
                 },
                 'sentiment': sentiment,
@@ -203,13 +204,9 @@ class LocationCollector:
         return f"{float(lat):.2f}, {float(lon):.2f}"
 
 
-def calculate_velocity(hashtags_count, prev_count=0):
+def calculate_velocity(hashtags_count):
     """Calculate trend velocity (0-100)"""
-    if prev_count == 0:
-        return min(hashtags_count * 8, 80)
-    
-    growth = ((hashtags_count - prev_count) / prev_count) * 100
-    return min(max(int(growth), 0), 100)
+    return min(hashtags_count * 8, 80)
 
 
 # ==================== MAIN ENDPOINT ====================
@@ -250,8 +247,13 @@ def get_trends():
                 all_hashtags.append(f"#{clean}")
     
     # Count frequencies and get top 10
-    hashtag_counts = Counter(all_hashtags)
-    top_hashtags = [tag for tag, count in hashtag_counts.most_common(10)]
+    hashtag_counts = {}
+    for tag in all_hashtags:
+        hashtag_counts[tag] = hashtag_counts.get(tag, 0) + 1
+    
+    # Sort by count
+    sorted_tags = sorted(hashtag_counts.items(), key=lambda x: x[1], reverse=True)
+    top_hashtags = [tag for tag, count in sorted_tags[:10]]
     
     # Calculate velocity
     velocity = calculate_velocity(len(top_hashtags))
@@ -278,33 +280,10 @@ def health():
     })
 
 
-if __name__ == '__main__':
-    print("=" * 60)
-    print("🔥 SSEC-SPARK - COMPLETE EDITION")
-    print("=" * 60)
-    print("\n ALL FEATURES ENABLED:")
-    print("   • Hashtags (Reddit + Google + News)")
-    print("   • News (BBC, Reuters, Guardian, CNN)")
-    print("   • Market (S&P 500, Bitcoin)")
-    print("   • Predictions (sentiment + trend)")
-    print("   • Map + Location")
-    print("   • Reddit Trending")
-    print("   • Trend Velocity")
-    print(f"\n Donation: {DONATION_ADDRESS}")
-    print("\n Server starting on http://localhost:5000")
-    print("=" * 60)
-    
-    app.run(port=5000, debug=True)
+# For Vercel serverless
+app = app
 
-    # Add this at the end of backend/app.py
-    # For local development
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
-
-    # For Vercel serverless
-    app = app
 # For local development
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
