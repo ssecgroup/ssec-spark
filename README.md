@@ -262,14 +262,11 @@ Health check endpoint
 - All API calls are proxied through the backend
 - Rate limiting is implemented to prevent abuse
 
-### HTTPS & Headers
-```python
-# Security headers implemented:
+### Security Headers 
+When deploying, add:
 - X-Content-Type-Options: nosniff
 - X-Frame-Options: DENY
 - X-XSS-Protection: 1; mode=block
-- Content-Security-Policy: default-src 'self'
-```
 
 ### Data Sources
 All data sources are public, legal, and comply with:
