@@ -349,15 +349,11 @@ flake8 backend/
 ```
 
 ---
-
 ## 💖 Support the Project
 
-SSEC-SPARK is completely free and open source. If you find it useful, consider supporting development:
+**Coming soon:** Donations via Open Source Collective (fiscal sponsorship)
 
-### Cryptocurrency
-```
-Ethereum (ERC20): 0x8242f0f25c5445F7822e80d3C9615e57586c6639
-Bitcoin: Coming soon
+*Direct crypto donations currently disabled during fiscal host application process.*
 ```
 
 ### Other Ways to Support
